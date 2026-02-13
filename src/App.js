@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   LineChart,
   Line,
@@ -29,7 +29,7 @@ import {
 
 const WEEK_PLAN = {
   6: {
-    // Saturday (Day 1)
+    // Saturday
     title: "شنبه - شروع قدرتمند",
     macros: { protein: 192, carbs: 180, fat: 58, calories: 2100 },
     meals: [
@@ -114,7 +114,7 @@ const WEEK_PLAN = {
     ],
   },
   0: {
-    // Sunday (Now with Friday's Plan)
+    // Sunday (Friday's Plan)
     title: "یکشنبه - تثبیت و استراحت",
     macros: { protein: 195, carbs: 180, fat: 58, calories: 2100 },
     meals: [
@@ -184,7 +184,7 @@ const WEEK_PLAN = {
     ],
   },
   1: {
-    // Monday (Day 3)
+    // Monday
     title: "دوشنبه - ریکاوری عضلانی",
     macros: { protein: 198, carbs: 185, fat: 55, calories: 2150 },
     meals: [
@@ -254,7 +254,7 @@ const WEEK_PLAN = {
     ],
   },
   2: {
-    // Tuesday (Day 4)
+    // Tuesday
     title: "سه‌شنبه - عدس‌پلو",
     macros: { protein: 190, carbs: 225, fat: 62, calories: 2250 },
     meals: [
@@ -333,7 +333,7 @@ const WEEK_PLAN = {
     ],
   },
   3: {
-    // Wednesday (Day 5)
+    // Wednesday
     title: "چهارشنبه - ماکارونی دی",
     macros: { protein: 185, carbs: 240, fat: 50, calories: 2300 },
     meals: [
@@ -403,7 +403,7 @@ const WEEK_PLAN = {
     ],
   },
   4: {
-    // Thursday (Day 6)
+    // Thursday
     title: "پنجشنبه - خورشت رژیمی",
     macros: { protein: 188, carbs: 205, fat: 60, calories: 2180 },
     meals: [
@@ -482,7 +482,7 @@ const WEEK_PLAN = {
     ],
   },
   5: {
-    // Friday (Now with Sunday's Plan)
+    // Friday (Sunday's Plan)
     title: "جمعه - تنوع دریایی",
     macros: { protein: 205, carbs: 210, fat: 52, calories: 2200 },
     meals: [
@@ -619,8 +619,12 @@ const MacroRing = ({ label, current, total, color }) => {
       </div>
       <div className="text-center mt-1">
         <div className="text-xs text-gray-400 font-medium mb-0.5">{label}</div>
-        <div className="text-[10px] text-gray-500">
-          {current}/{total}g
+        {/* Fixed Macro display logic: Current / Target g */}
+        <div
+          className="text-[10px] text-gray-500 font-mono tracking-tight"
+          dir="ltr"
+        >
+          {current}g / {total}g
         </div>
       </div>
     </div>
@@ -637,8 +641,11 @@ export default function App() {
   );
   const [hydration, setHydration] = useState(0);
   const [completedItems, setCompletedItems] = useState({});
-  const [weightData, setWeightData] = useState(INITIAL_WEIGHT_DATA);
+  const [highlightedId, setHighlightedId] = useState(null);
+  const [weightData] = useState(INITIAL_WEIGHT_DATA);
   const [profile] = useState({ weight: 134, height: 178, muscle: 50, fat: 35 });
+
+  const itemRefs = useRef({});
 
   useEffect(() => {
     const savedHydration = localStorage.getItem("hydration");
@@ -688,6 +695,22 @@ export default function App() {
     if (hydration < 4000) setHydration((prev) => prev + 250);
   };
 
+  // Jump to specific item in Plan tab
+  const navigateToItem = (id) => {
+    setActiveTab("plan");
+    setHighlightedId(id);
+
+    // Smooth scroll after tab switches
+    setTimeout(() => {
+      const element = itemRefs.current[id];
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      // Remove highlight after animation
+      setTimeout(() => setHighlightedId(null), 2500);
+    }, 100);
+  };
+
   // --- VIEWS ---
 
   const DashboardView = () => {
@@ -695,33 +718,48 @@ export default function App() {
     const nextSup = currentPlan.supplements?.find((s) => !isCompleted(s.id));
 
     return (
-      <div className="space-y-6 animate-fade-in pb-20">
+      <div className="space-y-6 animate-fade-in pb-24">
+        <style>{`
+          @keyframes bounce-highlight {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+          }
+          .bounce-item { animation: bounce-highlight 1s ease 2; }
+          .scrollbar-hide::-webkit-scrollbar { display: none; }
+        `}</style>
+
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-white">سلام سروش 💪</h1>
             <p className="text-gray-400 text-sm">امروز: {currentPlan.title}</p>
           </div>
           <div className="bg-gray-800 p-2 rounded-full border border-gray-600">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg">
               S
             </div>
           </div>
         </div>
 
         {/* MACROS SECTION */}
-        <div className="relative overflow-hidden rounded-3xl bg-gray-900 border border-gray-800 shadow-2xl">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
+        <div className="relative overflow-hidden rounded-3xl bg-gray-950 border border-gray-800 shadow-2xl">
+          <div className="absolute top-0 right-0 p-4 opacity-5">
             <Zap size={100} className="text-yellow-500" />
           </div>
           <div className="p-5 relative z-10">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-white font-bold flex items-center gap-2">
                 <Zap size={18} className="text-yellow-400" /> وضعیت سوخت
+                (ماکروها)
               </h3>
-              <div className="flex items-center gap-1 bg-gray-800/80 px-3 py-1 rounded-full border border-gray-700">
+              <div className="flex items-center gap-1 bg-gray-900 px-3 py-1 rounded-full border border-gray-700">
                 <Flame size={14} className="text-orange-500" />
-                <span className="text-white font-bold">{consumedCalories}</span>
-                <span className="text-[10px] text-gray-400">kcal</span>
+                <span className="text-white font-bold font-mono">
+                  {consumedCalories}
+                </span>
+                <span className="text-[10px] text-gray-400 uppercase">
+                  kcal
+                </span>
               </div>
             </div>
 
@@ -760,7 +798,7 @@ export default function App() {
             </div>
             <div className="w-full bg-gray-700 rounded-full h-3">
               <div
-                className="bg-emerald-500 h-3 rounded-full transition-all duration-700"
+                className="bg-emerald-500 h-3 rounded-full transition-all duration-700 shadow-sm"
                 style={{ width: `${calculateDailyProgress()}%` }}
               ></div>
             </div>
@@ -770,79 +808,93 @@ export default function App() {
             className="flex flex-col items-center justify-center p-6 relative overflow-hidden group cursor-pointer"
             onClick={addWater}
           >
-            <div className="absolute top-0 right-0 bg-blue-500/20 p-2 rounded-bl-xl text-blue-300 text-xs">
+            <div className="absolute top-0 right-0 bg-blue-500/20 px-2 py-1 rounded-bl-xl text-blue-300 text-[10px] font-bold">
               +250ml
             </div>
             <Droplet
               size={32}
               className="text-blue-400 mb-2 group-hover:scale-110 transition-transform"
             />
-            <span className="text-2xl font-bold text-white">
-              {hydration / 1000}L
+            <span className="text-2xl font-bold text-white font-mono">
+              {(hydration / 1000).toFixed(1)}L
             </span>
             <span className="text-xs text-gray-400">هدف: ۳.۵ لیتر</span>
             <div
-              className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-300"
-              style={{ width: `${(hydration / 3500) * 100}%` }}
+              className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-300 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+              style={{ width: `${Math.min((hydration / 3500) * 100, 100)}%` }}
             ></div>
           </Card>
 
           <Card className="flex flex-col justify-center items-center">
             <div className="text-xs text-gray-400 mb-1">کاهش وزن</div>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-white font-mono">
               3.0 <span className="text-sm font-normal">kg</span>
             </div>
-            <div className="text-xs text-emerald-400 mt-1">عالیه! 🔥</div>
+            <div className="text-xs text-emerald-400 mt-1 font-bold">
+              عالیه سروش! 🔥
+            </div>
           </Card>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
           {/* NEXT MEAL BOX */}
           <Card
-            className="border-l-4 border-l-blue-500 py-3"
-            onClick={() => setActiveTab("plan")}
+            className="border-l-4 border-l-blue-500 py-4 cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={() => nextMeal && navigateToItem(nextMeal.id)}
           >
-            <h3 className="text-gray-400 text-[10px] uppercase tracking-wider mb-1">
-              وعده بعدی
-            </h3>
-            {nextMeal ? (
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-white font-bold text-base">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-gray-400 text-[10px] uppercase tracking-widest font-bold mb-1">
+                  وعده بعدی
+                </h3>
+                {nextMeal ? (
+                  <div className="text-white font-bold text-lg">
                     {nextMeal.name}
                   </div>
-                  <div className="text-gray-400 text-xs">{nextMeal.time}</div>
-                </div>
-                <Utensils className="text-gray-600" size={20} />
+                ) : (
+                  <div className="text-emerald-400 font-bold text-sm">
+                    همه وعده‌ها میل شد ✅
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="text-emerald-400 font-bold text-sm">
-                تمامی وعده‌ها میل شد ✅
+              <div className="bg-blue-500/10 p-2 rounded-xl text-blue-400">
+                <Utensils size={24} />
+              </div>
+            </div>
+            {nextMeal && (
+              <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                <Calendar size={12} /> ساعت پیشنهادی: {nextMeal.time}
               </div>
             )}
           </Card>
 
           {/* NEXT SUPPLEMENT BOX */}
           <Card
-            className="border-l-4 border-l-purple-500 py-3"
-            onClick={() => setActiveTab("plan")}
+            className="border-l-4 border-l-purple-500 py-4 cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={() => nextSup && navigateToItem(nextSup.id)}
           >
-            <h3 className="text-gray-400 text-[10px] uppercase tracking-wider mb-1">
-              مکمل بعدی
-            </h3>
-            {nextSup ? (
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-white font-bold text-base">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-gray-400 text-[10px] uppercase tracking-widest font-bold mb-1">
+                  مکمل بعدی
+                </h3>
+                {nextSup ? (
+                  <div className="text-white font-bold text-lg">
                     {nextSup.name}
                   </div>
-                  <div className="text-gray-400 text-xs">{nextSup.time}</div>
-                </div>
-                <Pill className="text-purple-400/50" size={20} />
+                ) : (
+                  <div className="text-emerald-400 font-bold text-sm">
+                    مکمل‌های امروز تمام شد ✅
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="text-emerald-400 font-bold text-sm">
-                مکمل‌های امروز تمام شد ✅
+              <div className="bg-purple-500/10 p-2 rounded-xl text-purple-400">
+                <Pill size={24} />
+              </div>
+            </div>
+            {nextSup && (
+              <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                <Calendar size={12} /> زمان مصرف: {nextSup.time}
               </div>
             )}
           </Card>
@@ -852,7 +904,7 @@ export default function App() {
   };
 
   const PlanView = () => (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6 pb-24">
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {[6, 0, 1, 2, 3, 4, 5].map((d) => (
           <button
@@ -861,9 +913,9 @@ export default function App() {
               setToday(d);
               setCurrentPlan(WEEK_PLAN[d]);
             }}
-            className={`px-4 py-2 rounded-xl whitespace-nowrap text-sm font-medium transition-colors ${
+            className={`px-5 py-2.5 rounded-2xl whitespace-nowrap text-sm font-bold transition-all ${
               today === d
-                ? "bg-blue-600 text-white"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400 ring-offset-2 ring-offset-gray-900"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
@@ -879,28 +931,31 @@ export default function App() {
         {currentPlan.meals?.map((meal) => (
           <div
             key={meal.id}
+            ref={(el) => (itemRefs.current[meal.id] = el)}
             onClick={() => toggleItem(meal.id)}
-            className={`p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-4 ${
+            className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-4 ${
               isCompleted(meal.id)
-                ? "bg-gray-900/50 border-gray-800 opacity-60"
-                : "bg-gray-800 border-gray-700 hover:border-gray-600"
+                ? "bg-gray-950/50 border-gray-900 opacity-60"
+                : highlightedId === meal.id
+                ? "bg-blue-900/30 border-blue-500 bounce-item"
+                : "bg-gray-800 border-gray-700 hover:border-gray-600 shadow-md"
             }`}
           >
             <div
-              className={`mt-1 w-6 h-6 rounded-full flex items-center justify-center border ${
+              className={`mt-1 w-7 h-7 rounded-full flex items-center justify-center border-2 transition-colors ${
                 isCompleted(meal.id)
-                  ? "bg-emerald-500 border-emerald-500"
-                  : "border-gray-500"
+                  ? "bg-emerald-500 border-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                  : "border-gray-600"
               }`}
             >
               {isCompleted(meal.id) && (
-                <CheckCircle size={14} className="text-white" />
+                <CheckCircle size={16} className="text-white" />
               )}
             </div>
             <div className="flex-1">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-start">
                 <h3
-                  className={`font-bold ${
+                  className={`font-bold text-base ${
                     isCompleted(meal.id)
                       ? "text-gray-500 line-through"
                       : "text-white"
@@ -908,18 +963,23 @@ export default function App() {
                 >
                   {meal.name}
                 </h3>
-                <span className="text-xs text-gray-500 bg-gray-900 px-2 py-1 rounded">
+                <span className="text-[10px] text-gray-400 bg-gray-900 font-bold px-2 py-1 rounded-lg border border-gray-800">
                   {meal.time}
                 </span>
               </div>
-              <p className="text-sm text-gray-400 mt-1">{meal.desc}</p>
+              <p className="text-sm text-gray-400 mt-1 leading-relaxed">
+                {meal.desc}
+              </p>
               {!isCompleted(meal.id) && (
-                <div className="flex gap-2 mt-2">
-                  <span className="text-[10px] bg-gray-700/50 px-1.5 rounded text-emerald-400">
+                <div className="flex gap-2 mt-3">
+                  <span className="text-[10px] bg-gray-900 px-2 py-1 rounded-md text-emerald-400 font-bold border border-emerald-900/50">
                     P: {meal.p}g
                   </span>
-                  <span className="text-[10px] bg-gray-700/50 px-1.5 rounded text-blue-400">
+                  <span className="text-[10px] bg-gray-900 px-2 py-1 rounded-md text-blue-400 font-bold border border-blue-900/50">
                     C: {meal.c}g
+                  </span>
+                  <span className="text-[10px] bg-gray-900 px-2 py-1 rounded-md text-rose-400 font-bold border border-rose-900/50">
+                    F: {meal.f}g
                   </span>
                 </div>
               )}
@@ -927,29 +987,34 @@ export default function App() {
           </div>
         ))}
 
-        <h2 className="text-xl font-bold text-white flex items-center gap-2 mt-8">
+        <h2 className="text-xl font-bold text-white flex items-center gap-2 mt-10">
           <Pill size={20} className="text-purple-500" /> مکمل‌ها
         </h2>
         <div className="grid grid-cols-1 gap-3">
           {currentPlan.supplements?.map((sup) => (
             <div
               key={sup.id}
+              ref={(el) => (itemRefs.current[sup.id] = el)}
               onClick={() => toggleItem(sup.id)}
-              className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+              className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                 isCompleted(sup.id)
-                  ? "bg-gray-900/50 border-gray-800 opacity-50"
-                  : "bg-gray-800 border-gray-700"
+                  ? "bg-gray-950/50 border-gray-900 opacity-50"
+                  : highlightedId === sup.id
+                  ? "bg-purple-900/30 border-purple-500 bounce-item"
+                  : "bg-gray-800 border-gray-700 shadow-md"
               }`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div
-                  className={`w-2 h-10 rounded-full ${
-                    isCompleted(sup.id) ? "bg-gray-600" : "bg-purple-500"
+                  className={`w-1.5 h-10 rounded-full ${
+                    isCompleted(sup.id)
+                      ? "bg-gray-700"
+                      : "bg-gradient-to-b from-purple-500 to-indigo-600"
                   }`}
                 ></div>
                 <div>
                   <div
-                    className={`font-medium ${
+                    className={`font-bold ${
                       isCompleted(sup.id)
                         ? "text-gray-500 line-through"
                         : "text-gray-200"
@@ -957,12 +1022,22 @@ export default function App() {
                   >
                     {sup.name}
                   </div>
-                  <div className="text-xs text-gray-500">{sup.time}</div>
+                  <div className="text-xs text-gray-500 font-medium">
+                    {sup.time}
+                  </div>
                 </div>
               </div>
-              {isCompleted(sup.id) && (
-                <CheckCircle size={18} className="text-emerald-500" />
-              )}
+              <div
+                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                  isCompleted(sup.id)
+                    ? "bg-emerald-500 border-emerald-500"
+                    : "border-gray-700"
+                }`}
+              >
+                {isCompleted(sup.id) && (
+                  <CheckCircle size={14} className="text-white" />
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -971,25 +1046,24 @@ export default function App() {
   );
 
   const ProgressView = () => (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6 pb-24">
       <div className="grid grid-cols-2 gap-4">
-        <Card className="text-center">
-          <div className="text-gray-400 text-sm mb-1">وزن شروع</div>
-          <div className="text-2xl font-bold text-white">
+        <Card className="text-center bg-gray-800/50">
+          <div className="text-gray-400 text-xs mb-1">وزن شروع</div>
+          <div className="text-2xl font-bold text-white font-mono">
             134 <span className="text-sm font-normal">kg</span>
           </div>
         </Card>
-        <Card className="text-center border-emerald-500 border-b-4">
-          <div className="text-gray-400 text-sm mb-1">وزن فعلی</div>
-          <div className="text-2xl font-bold text-white">
-            {weightData[weightData.length - 1].weight}{" "}
-            <span className="text-sm font-normal">kg</span>
+        <Card className="text-center border-emerald-500 border-b-4 bg-gray-800/80">
+          <div className="text-gray-400 text-xs mb-1">وزن فعلی</div>
+          <div className="text-2xl font-bold text-white font-mono">
+            131.0 <span className="text-sm font-normal">kg</span>
           </div>
         </Card>
       </div>
 
-      <Card className="h-64">
-        <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+      <Card className="h-72">
+        <h3 className="text-white font-bold mb-6 flex items-center gap-2">
           <TrendingDown size={18} className="text-blue-500" /> روند کاهش وزن
         </h3>
         <ResponsiveContainer width="100%" height="100%">
@@ -1000,17 +1074,30 @@ export default function App() {
                 <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#374151"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              stroke="#9ca3af"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+            />
             <YAxis
               domain={["dataMin - 1", "dataMax + 1"]}
               stroke="#9ca3af"
               fontSize={12}
+              tickLine={false}
+              axisLine={false}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1f2937",
-                borderColor: "#374151",
+                backgroundColor: "#111827",
+                borderRadius: "12px",
+                border: "1px solid #374151",
                 color: "#fff",
               }}
             />
@@ -1018,6 +1105,7 @@ export default function App() {
               type="monotone"
               dataKey="weight"
               stroke="#3b82f6"
+              strokeWidth={3}
               fillOpacity={1}
               fill="url(#colorWeight)"
             />
@@ -1025,22 +1113,26 @@ export default function App() {
         </ResponsiveContainer>
       </Card>
 
-      <Card>
-        <h3 className="text-white font-bold mb-4">آمار بدنی</h3>
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
+        <h3 className="text-white font-bold mb-5 flex items-center gap-2">
+          <Activity size={18} className="text-rose-500" /> آنالیز ترکیبات بدن
+        </h3>
         <div className="space-y-4">
-          <div className="flex justify-between items-center border-b border-gray-700 pb-2">
-            <span className="text-gray-400">توده عضلانی</span>
-            <span className="text-white font-bold text-lg">
+          <div className="flex justify-between items-center p-3 bg-gray-950/40 rounded-xl">
+            <span className="text-gray-400 font-medium">توده عضلانی</span>
+            <span className="text-white font-bold text-lg font-mono">
               {profile.muscle} kg
             </span>
           </div>
-          <div className="flex justify-between items-center border-b border-gray-700 pb-2">
-            <span className="text-gray-400">درصد چربی</span>
-            <span className="text-white font-bold text-lg">{profile.fat}%</span>
+          <div className="flex justify-between items-center p-3 bg-gray-950/40 rounded-xl">
+            <span className="text-gray-400 font-medium">درصد چربی</span>
+            <span className="text-rose-400 font-bold text-lg font-mono">
+              {profile.fat}%
+            </span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-400">BMI</span>
-            <span className="text-white font-bold text-lg">
+          <div className="flex justify-between items-center p-3 bg-gray-950/40 rounded-xl">
+            <span className="text-gray-400 font-medium">BMI</span>
+            <span className="text-blue-400 font-bold text-lg font-mono">
               {(profile.weight / (profile.height / 100) ** 2).toFixed(1)}
             </span>
           </div>
@@ -1050,67 +1142,96 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 font-sans" dir="rtl">
-      <div className="max-w-md mx-auto min-h-screen bg-gray-900 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-40 bg-blue-600/10 blur-3xl pointer-events-none"></div>
+    <div
+      className="min-h-screen bg-black text-gray-100 font-sans selection:bg-blue-500/30"
+      dir="rtl"
+    >
+      <div className="max-w-md mx-auto min-h-screen bg-gray-900 shadow-2xl relative flex flex-col border-x border-gray-800">
+        {/* Decorative background glow */}
+        <div className="absolute top-0 left-0 w-full h-64 bg-blue-600/10 blur-[100px] pointer-events-none"></div>
 
-        <div className="relative z-10 p-6 h-full overflow-y-auto scrollbar-hide">
+        <div className="flex-1 relative z-10 p-5 overflow-y-auto scroll-smooth scrollbar-hide">
           {activeTab === "dashboard" && <DashboardView />}
           {activeTab === "plan" && <PlanView />}
           {activeTab === "progress" && <ProgressView />}
         </div>
 
-        <div className="fixed bottom-0 max-w-md w-full bg-gray-800/90 backdrop-blur-lg border-t border-gray-700 p-4 flex justify-around items-center z-50 rounded-t-2xl">
+        {/* BOTTOM TAB BAR */}
+        <div className="sticky bottom-0 w-full bg-gray-950/90 backdrop-blur-2xl border-t border-gray-800 px-4 py-3 flex justify-around items-center z-50 rounded-t-[32px] shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
           <button
             onClick={() => setActiveTab("dashboard")}
-            className={`flex flex-col items-center gap-1 transition-colors ${
+            className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${
               activeTab === "dashboard"
-                ? "text-blue-500"
+                ? "text-blue-500 scale-110"
                 : "text-gray-500 hover:text-gray-300"
             }`}
           >
-            <Activity size={24} />
-            <span className="text-xs font-medium">داشبورد</span>
+            <div
+              className={`p-1.5 rounded-xl ${
+                activeTab === "dashboard" ? "bg-blue-500/10" : ""
+              }`}
+            >
+              <Activity size={22} />
+            </div>
+            <span className="text-[10px] font-bold tracking-tight">
+              داشبورد
+            </span>
           </button>
 
           <button
             onClick={() => setActiveTab("plan")}
-            className={`flex flex-col items-center gap-1 transition-colors ${
+            className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${
               activeTab === "plan"
-                ? "text-blue-500"
+                ? "text-blue-500 scale-110"
                 : "text-gray-500 hover:text-gray-300"
             }`}
           >
-            <Calendar size={24} />
-            <span className="text-xs font-medium">برنامه</span>
+            <div
+              className={`p-1.5 rounded-xl ${
+                activeTab === "plan" ? "bg-blue-500/10" : ""
+              }`}
+            >
+              <Calendar size={22} />
+            </div>
+            <span className="text-[10px] font-bold tracking-tight">برنامه</span>
           </button>
 
-          <div className="relative -top-6">
+          <div className="relative -top-8">
             <button
               onClick={addWater}
-              className="w-14 h-14 bg-blue-600 hover:bg-blue-500 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/40 text-white transition-transform active:scale-95 border-4 border-gray-900"
+              className="w-16 h-16 bg-gradient-to-tr from-blue-700 to-blue-500 hover:from-blue-600 hover:to-blue-400 rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(59,130,246,0.5)] text-white transition-all active:scale-90 active:rotate-12 border-[6px] border-gray-900"
             >
-              <Droplet size={24} fill="white" />
+              <Droplet size={28} fill="white" />
             </button>
           </div>
 
           <button
             onClick={() => setActiveTab("progress")}
-            className={`flex flex-col items-center gap-1 transition-colors ${
+            className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${
               activeTab === "progress"
-                ? "text-blue-500"
+                ? "text-blue-500 scale-110"
                 : "text-gray-500 hover:text-gray-300"
             }`}
           >
-            <TrendingDown size={24} />
-            <span className="text-xs font-medium">پیشرفت</span>
+            <div
+              className={`p-1.5 rounded-xl ${
+                activeTab === "progress" ? "bg-blue-500/10" : ""
+              }`}
+            >
+              <TrendingDown size={22} />
+            </div>
+            <span className="text-[10px] font-bold tracking-tight">پیشرفت</span>
           </button>
 
           <button
-            className={`flex flex-col items-center gap-1 transition-colors text-gray-500 hover:text-gray-300`}
+            className={`flex flex-col items-center gap-1.5 transition-all duration-300 text-gray-500 hover:text-gray-300`}
           >
-            <User size={24} />
-            <span className="text-xs font-medium">پروفایل</span>
+            <div className="p-1.5 rounded-xl">
+              <User size={22} />
+            </div>
+            <span className="text-[10px] font-bold tracking-tight">
+              پروفایل
+            </span>
           </button>
         </div>
       </div>
