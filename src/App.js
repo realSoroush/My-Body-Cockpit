@@ -23,6 +23,10 @@ import {
   Plus,
   Zap,
   Flame,
+  Dumbbell,
+  ShoppingCart,
+  Trophy,
+  Moon,
 } from "lucide-react";
 
 // --- DATA & CONSTANTS ---
@@ -31,12 +35,13 @@ const WEEK_PLAN = {
   6: {
     // Saturday
     title: "شنبه - شروع قدرتمند",
+    isTraining: true,
     macros: { protein: 192, carbs: 180, fat: 58, calories: 2100 },
     meals: [
       {
         id: "b",
         name: "صبحانه (منو ۱)",
-        desc: "۶ سفیده + ۲ تست + ۶۰گ پنیر + گردو",
+        desc: "۶ عدد سفیده تخم‌مرغ + ۲ عدد نان تست سبوس‌دار + ۶۰ گرم پنیر کم‌چرب + ۲ عدد گردو + چای سبز",
         time: "08:00",
         p: 35,
         c: 30,
@@ -45,35 +50,53 @@ const WEEK_PLAN = {
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ کاسه عدسی + ۱ سیب",
+        desc: "۱ اسکوپ پروتئین وی محلول در شیر یا ماست کم‌چرب",
         time: "10:30",
-        p: 12,
-        c: 25,
-        f: 1,
+        p: 25,
+        c: 5,
+        f: 2,
       },
       {
         id: "l",
         name: "ناهار (منو ۱)",
-        desc: "۳/۴ برنج قهوه‌ای + ۲۰۰گ مرغ + سالاد",
+        desc: "۳/۴ بشقاب برنج قهوه‌ای + ۲۰۰ گرم سینه مرغ پخته + ۱ کاسه سالاد با ۱ قاشق روغن زیتون",
         time: "13:30",
         p: 60,
         c: 60,
         f: 10,
       },
       {
+        id: "pre",
+        name: "قبل تمرین",
+        desc: "۱ عدد قرص کافئین ۲۰۰ میلی‌گرم",
+        time: "16:00",
+        p: 0,
+        c: 0,
+        f: 0,
+      },
+      {
+        id: "post",
+        name: "بعد تمرین",
+        desc: "۱ عدد سیب‌زمینی گریل/آبپز + ۲ عدد فیله مرغ (۵۰ گرمی) یا ۱ اسکوپ وی با آب",
+        time: "18:00",
+        p: 30,
+        c: 35,
+        f: 2,
+      },
+      {
         id: "s2",
-        name: "عصرانه",
-        desc: "آجیل خام + ۱ سیب",
-        time: "17:00",
+        name: "عصرانه (سالاد)",
+        desc: "پیش‌دستی سالاد (کاهو، ۱ گوجه، جوانه گندم، ۱ هویج رنده شده، نصف آووکادو)",
+        time: "19:30",
         p: 5,
-        c: 20,
-        f: 15,
+        c: 15,
+        f: 10,
       },
       {
         id: "d",
         name: "شام (منو ۲)",
-        desc: "۱۷۰گ استیک + سبزی + ۱ تست",
-        time: "20:30",
+        desc: "۱۷۰ گرم استیک گوشت قرمز + ۱ برش پنیر کم‌چرب + ۱ مشت سبزی خوردن + ۱ عدد نان تست",
+        time: "21:00",
         p: 50,
         c: 15,
         f: 15,
@@ -114,14 +137,15 @@ const WEEK_PLAN = {
     ],
   },
   0: {
-    // Sunday (Friday's Plan)
+    // Sunday (Rest Day - No Pre/Post Workout)
     title: "یکشنبه - تثبیت و استراحت",
+    isTraining: false,
     macros: { protein: 195, carbs: 180, fat: 58, calories: 2100 },
     meals: [
       {
         id: "b",
         name: "صبحانه (منو ۱)",
-        desc: "۶ سفیده + ۲ تست + ۶۰گ پنیر + گردو",
+        desc: "۶ عدد سفیده تخم‌مرغ + ۲ عدد نان تست سبوس‌دار + ۶۰ گرم پنیر کم‌چرب + ۲ عدد گردو",
         time: "08:00",
         p: 35,
         c: 30,
@@ -130,35 +154,44 @@ const WEEK_PLAN = {
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ سیب + آجیل خام",
+        desc: "۱ کاسه کوچک عدسی + ۱ عدد سیب (ترجیحاً با پوست)",
         time: "10:30",
-        p: 5,
-        c: 20,
-        f: 15,
+        p: 12,
+        c: 25,
+        f: 1,
       },
       {
         id: "l",
         name: "ناهار (منو ۱)",
-        desc: "۳/۴ برنج + ۲۰۰گ مرغ + سالاد",
+        desc: "۳/۴ بشقاب برنج قهوه‌ای + ۲۰۰ گرم سینه مرغ پخته + سالاد",
         time: "13:30",
         p: 60,
         c: 60,
         f: 10,
       },
       {
-        id: "s2",
-        name: "عصرانه",
-        desc: "۱ کاسه عدسی یا نیم اسکوپ وی",
+        id: "s2_1",
+        name: "عصرانه اول",
+        desc: "نیم اسکوپ وی در شیر کم‌چرب + نصف مشت آجیل خام (پسته/بادام)",
         time: "17:00",
-        p: 15,
-        c: 20,
-        f: 2,
+        p: 20,
+        c: 10,
+        f: 15,
+      },
+      {
+        id: "s2_2",
+        name: "عصرانه دوم",
+        desc: "پیش‌دستی سالاد (کاهو، گوجه، جوانه، هویج، نصف آووکادو)",
+        time: "19:00",
+        p: 5,
+        c: 15,
+        f: 10,
       },
       {
         id: "d",
         name: "شام (منو ۲)",
-        desc: "۱۷۰گ استیک + سبزی + ۱ تست",
-        time: "20:30",
+        desc: "۱۷۰ گرم استیک گوشت قرمز + ۱ برش پنیر کم‌چرب + سبزی خوردن + ۱ عدد نان تست",
+        time: "21:00",
         p: 50,
         c: 15,
         f: 15,
@@ -166,7 +199,7 @@ const WEEK_PLAN = {
       {
         id: "bed",
         name: "قبل خواب",
-        desc: "۱ لیوان شیر",
+        desc: "۱ لیوان شیر کم‌چرب",
         time: "23:00",
         p: 8,
         c: 12,
@@ -186,12 +219,13 @@ const WEEK_PLAN = {
   1: {
     // Monday
     title: "دوشنبه - ریکاوری عضلانی",
+    isTraining: true,
     macros: { protein: 198, carbs: 185, fat: 55, calories: 2150 },
     meals: [
       {
         id: "b",
         name: "صبحانه (منو ۱)",
-        desc: "۶ سفیده + ۲ تست + ۶۰گ پنیر + گردو",
+        desc: "۶ عدد سفیده تخم‌مرغ + ۲ عدد نان تست + ۶۰ گرم پنیر + ۲ عدد گردو",
         time: "08:00",
         p: 35,
         c: 30,
@@ -200,35 +234,53 @@ const WEEK_PLAN = {
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ کاسه عدسی + ۱ سیب",
+        desc: "۱ اسکوپ پروتئین وی در شیر یا ماست کم‌چرب",
         time: "10:30",
-        p: 12,
-        c: 25,
-        f: 1,
+        p: 25,
+        c: 5,
+        f: 2,
       },
       {
         id: "l",
         name: "ناهار (منو ۳)",
-        desc: "۳/۴ برنج + ۲۰۰گ جوجه کباب + سالاد",
+        desc: "۳/۴ بشقاب برنج قهوه‌ای + ۶ تکه جوجه کباب (۲۰۰ گرم) + ۱ کاسه سالاد",
         time: "13:30",
         p: 55,
         c: 50,
         f: 12,
       },
       {
+        id: "pre",
+        name: "قبل تمرین",
+        desc: "۱ عدد قرص کافئین ۲۰۰ میلی‌گرم",
+        time: "16:00",
+        p: 0,
+        c: 0,
+        f: 0,
+      },
+      {
+        id: "post",
+        name: "بعد تمرین",
+        desc: "۱ عدد سیب‌زمینی گریل/آبپز + ۲ عدد فیله مرغ (۵۰ گرمی)",
+        time: "18:00",
+        p: 30,
+        c: 35,
+        f: 2,
+      },
+      {
         id: "s2",
-        name: "عصرانه",
-        desc: "۱ اسکوپ وی + شیر + آجیل",
-        time: "17:00",
-        p: 35,
+        name: "عصرانه (سالاد)",
+        desc: "سالاد کامل (کاهو، گوجه، جوانه، هویج، نصف آووکادو)",
+        time: "19:30",
+        p: 5,
         c: 15,
         f: 10,
       },
       {
         id: "d",
         name: "شام (منو ۱)",
-        desc: "خوراک مرغ (۱۸۰گ) + سبزیجات + ۱ تست",
-        time: "20:30",
+        desc: "۱۸۰ گرم خوراک مرغ + ۱ هویج + ۱/۴ لیوان لوبیا سبز + گوجه + ۱ نان تست",
+        time: "21:00",
         p: 45,
         c: 25,
         f: 8,
@@ -236,7 +288,7 @@ const WEEK_PLAN = {
       {
         id: "bed",
         name: "قبل خواب",
-        desc: "۱ لیوان شیر",
+        desc: "۱ لیوان شیر کم‌چرب",
         time: "23:00",
         p: 8,
         c: 12,
@@ -254,14 +306,15 @@ const WEEK_PLAN = {
     ],
   },
   2: {
-    // Tuesday
+    // Tuesday (Rest Day)
     title: "سه‌شنبه - عدس‌پلو",
+    isTraining: false,
     macros: { protein: 190, carbs: 225, fat: 62, calories: 2250 },
     meals: [
       {
         id: "b",
         name: "صبحانه (منو ۲)",
-        desc: "اوتمیل کامل",
+        desc: "۱ موز + ۵۰ گرم جوپرک + ۱ قاشق عسل + ۲ گردو + ۲۵۰ml شیر + ۱ تکه نان جو + ۱ قاشق کره بادام‌زمینی",
         time: "08:00",
         p: 20,
         c: 60,
@@ -270,52 +323,52 @@ const WEEK_PLAN = {
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ سیب + آجیل خام",
+        desc: "۱ کاسه کوچک عدسی + ۱ عدد سیب",
         time: "10:30",
-        p: 5,
-        c: 20,
-        f: 15,
+        p: 12,
+        c: 25,
+        f: 1,
       },
       {
         id: "l",
         name: "ناهار (منو ۴)",
-        desc: "۳/۴ عدس‌پلو + ۱۰۰گ گوشت چرخ‌کرده",
+        desc: "۳/۴ بشقاب عدس‌پلو (برنج قهوه‌ای) + ۵ قاشق گوشت چرخ‌کرده بدون چربی + سبزی",
         time: "13:30",
         p: 40,
         c: 70,
         f: 15,
       },
       {
-        id: "pre",
-        name: "قبل تمرین",
-        desc: "کافئین ۲۰۰",
-        time: "16:00",
-        p: 0,
-        c: 0,
-        f: 0,
+        id: "s2_1",
+        name: "عصرانه اول",
+        desc: "نیم اسکوپ وی در شیر کم‌چرب + نصف مشت آجیل خام",
+        time: "17:00",
+        p: 20,
+        c: 10,
+        f: 15,
       },
       {
-        id: "post",
-        name: "بعد تمرین",
-        desc: "۱ سیب‌زمینی + ۲ فیله مرغ (یا وی)",
-        time: "18:00",
-        p: 30,
-        c: 35,
-        f: 2,
+        id: "s2_2",
+        name: "عصرانه دوم",
+        desc: "سالاد کامل (کاهو، گوجه، جوانه، هویج، نصف آووکادو)",
+        time: "19:00",
+        p: 5,
+        c: 15,
+        f: 10,
       },
       {
         id: "d",
         name: "شام (منو ۴)",
-        desc: "۲۰۰گ ماهی کبابی + سیب‌زمینی کوچک",
-        time: "20:30",
+        desc: "۲۰۰ گرم ماهی شیر + ۱ سیب‌زمینی گریل + ۱ مشت تخمه خام + ۱ سیب‌زمینی کوچک",
+        time: "21:00",
         p: 45,
-        c: 25,
-        f: 10,
+        c: 40,
+        f: 15,
       },
       {
         id: "bed",
         name: "قبل خواب",
-        desc: "۱ لیوان شیر",
+        desc: "۱ لیوان شیر کم‌چرب",
         time: "23:00",
         p: 8,
         c: 12,
@@ -335,12 +388,13 @@ const WEEK_PLAN = {
   3: {
     // Wednesday
     title: "چهارشنبه - ماکارونی دی",
+    isTraining: true,
     macros: { protein: 185, carbs: 240, fat: 50, calories: 2300 },
     meals: [
       {
         id: "b",
         name: "صبحانه (منو ۱)",
-        desc: "۶ سفیده + ۲ تست + ۶۰گ پنیر + گردو",
+        desc: "۶ عدد سفیده تخم‌مرغ + ۲ عدد نان تست + ۶۰ گرم پنیر + ۲ عدد گردو",
         time: "08:00",
         p: 35,
         c: 30,
@@ -349,35 +403,53 @@ const WEEK_PLAN = {
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ اسکوپ وی + شیر",
+        desc: "۱ اسکوپ پروتئین وی در شیر یا ماست کم‌چرب",
         time: "10:30",
-        p: 30,
-        c: 12,
+        p: 25,
+        c: 5,
         f: 2,
       },
       {
         id: "l",
         name: "ناهار (منو ۲)",
-        desc: "۱ لیوان ماکارونی + ۵۰گ سویا + سالاد",
+        desc: "۱ لیوان ماکارونی پخته + ۵۰ گرم سویا + ۱ پیش‌دستی سبزی خوردن",
         time: "13:30",
         p: 35,
         c: 80,
         f: 10,
       },
       {
+        id: "pre",
+        name: "قبل تمرین",
+        desc: "۱ عدد قرص کافئین ۲۰۰ میلی‌گرم",
+        time: "16:00",
+        p: 0,
+        c: 0,
+        f: 0,
+      },
+      {
+        id: "post",
+        name: "بعد تمرین",
+        desc: "۱ سیب‌زمینی گریل/آبپز + ۲ فیله مرغ (۵۰ گرمی)",
+        time: "18:00",
+        p: 30,
+        c: 35,
+        f: 2,
+      },
+      {
         id: "s2",
-        name: "عصرانه",
-        desc: "آجیل خام + سالاد فصل با آووکادو",
-        time: "17:00",
+        name: "عصرانه (سالاد)",
+        desc: "سالاد کامل (کاهو، گوجه، جوانه، هویج، نصف آووکادو)",
+        time: "19:30",
         p: 5,
         c: 15,
-        f: 18,
+        f: 10,
       },
       {
         id: "d",
         name: "شام (منو ۱)",
-        desc: "خوراک مرغ (۱۸۰گ) + سبزیجات + ۱ تست",
-        time: "20:30",
+        desc: "۱۸۰ گرم خوراک مرغ + هویج + لوبیا سبز + گوجه + ۱ نان تست",
+        time: "21:00",
         p: 45,
         c: 25,
         f: 8,
@@ -385,7 +457,7 @@ const WEEK_PLAN = {
       {
         id: "bed",
         name: "قبل خواب",
-        desc: "۱ لیوان شیر",
+        desc: "۱ لیوان شیر کم‌چرب",
         time: "23:00",
         p: 8,
         c: 12,
@@ -405,12 +477,13 @@ const WEEK_PLAN = {
   4: {
     // Thursday
     title: "پنجشنبه - خورشت رژیمی",
+    isTraining: true,
     macros: { protein: 188, carbs: 205, fat: 60, calories: 2180 },
     meals: [
       {
         id: "b",
         name: "صبحانه (منو ۲)",
-        desc: "اوتمیل کامل",
+        desc: "۱ موز + ۵۰ گرم جوپرک + ۱ قاشق عسل + ۲ گردو + شیر + نان جو + کره بادام‌زمینی",
         time: "08:00",
         p: 20,
         c: 60,
@@ -419,16 +492,16 @@ const WEEK_PLAN = {
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ کاسه عدسی + ۱ سیب",
+        desc: "۱ اسکوپ پروتئین وی در شیر یا ماست کم‌چرب",
         time: "10:30",
-        p: 12,
-        c: 25,
-        f: 1,
+        p: 25,
+        c: 5,
+        f: 2,
       },
       {
         id: "l",
         name: "ناهار (منو ۶)",
-        desc: "۳/۴ برنج + خورشت رژیمی + ۱۲۰گ گوشت",
+        desc: "۳/۴ بشقاب برنج قهوه‌ای + خورشت کم‌چرب + ۱۲۰ گرم گوشت (۴ تکه)",
         time: "13:30",
         p: 45,
         c: 50,
@@ -437,7 +510,7 @@ const WEEK_PLAN = {
       {
         id: "pre",
         name: "قبل تمرین",
-        desc: "کافئین ۲۰۰",
+        desc: "۱ عدد قرص کافئین ۲۰۰ میلی‌گرم",
         time: "16:00",
         p: 0,
         c: 0,
@@ -446,17 +519,26 @@ const WEEK_PLAN = {
       {
         id: "post",
         name: "بعد تمرین",
-        desc: "۱ سیب‌زمینی + ۲ فیله مرغ (یا وی)",
+        desc: "۱ سیب‌زمینی گریل/آبپز + ۲ فیله مرغ (۵۰ گرمی)",
         time: "18:00",
         p: 30,
         c: 35,
         f: 2,
       },
       {
+        id: "s2",
+        name: "عصرانه (سالاد)",
+        desc: "سالاد کامل (کاهو، گوجه، جوانه، هویج، نصف آووکادو)",
+        time: "19:30",
+        p: 5,
+        c: 15,
+        f: 10,
+      },
+      {
         id: "d",
         name: "شام (منو ۳)",
-        desc: "بورانی اسفناج + ۳ فیله مرغ + ماست + تست",
-        time: "20:30",
+        desc: "نصف بشقاب بورانی اسفناج + ۳ فیله مرغ (۱۸۰ گرم) + ۱ کاسه ماست + ۱ نان تست",
+        time: "21:00",
         p: 45,
         c: 25,
         f: 8,
@@ -464,7 +546,7 @@ const WEEK_PLAN = {
       {
         id: "bed",
         name: "قبل خواب",
-        desc: "۱ لیوان شیر",
+        desc: "۱ لیوان شیر کم‌چرب",
         time: "23:00",
         p: 8,
         c: 12,
@@ -482,14 +564,15 @@ const WEEK_PLAN = {
     ],
   },
   5: {
-    // Friday (Sunday's Plan)
+    // Friday (Rest Day)
     title: "جمعه - تنوع دریایی",
+    isTraining: false,
     macros: { protein: 205, carbs: 210, fat: 52, calories: 2200 },
     meals: [
       {
         id: "b",
         name: "صبحانه (منو ۲)",
-        desc: "اوتمیل (جو+شیر+موز+عسل+کره بادام+گردو)",
+        desc: "۱ موز + ۵۰ گرم جوپرک + ۱ قاشق عسل + ۲ گردو + شیر + نان جو + کره بادام‌زمینی",
         time: "08:00",
         p: 20,
         c: 60,
@@ -498,44 +581,44 @@ const WEEK_PLAN = {
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ اسکوپ وی + آب",
+        desc: "۱ کاسه کوچک عدسی + ۱ عدد سیب",
         time: "10:30",
-        p: 25,
-        c: 2,
+        p: 12,
+        c: 25,
         f: 1,
       },
       {
         id: "l",
         name: "ناهار (منو ۵)",
-        desc: "۳/۴ برنج + ۲۲۰گ ماهی کبابی",
+        desc: "۳/۴ بشقاب برنج قهوه‌ای + ۲۲۰ گرم ماهی کبابی + لیمو",
         time: "13:30",
         p: 50,
         c: 50,
         f: 12,
       },
       {
-        id: "pre",
-        name: "قبل تمرین",
-        desc: "کافئین ۲۰۰",
-        time: "16:00",
-        p: 0,
-        c: 0,
-        f: 0,
+        id: "s2_1",
+        name: "عصرانه اول",
+        desc: "نیم اسکوپ وی در شیر کم‌چرب + نصف مشت آجیل خام",
+        time: "17:00",
+        p: 20,
+        c: 10,
+        f: 15,
       },
       {
-        id: "post",
-        name: "بعد تمرین",
-        desc: "۱ سیب‌زمینی + ۲ فیله مرغ (یا وی)",
-        time: "18:00",
-        p: 30,
-        c: 35,
-        f: 2,
+        id: "s2_2",
+        name: "عصرانه دوم",
+        desc: "سالاد کامل (کاهو، گوجه، جوانه، هویج، نصف آووکادو)",
+        time: "19:00",
+        p: 5,
+        c: 15,
+        f: 10,
       },
       {
         id: "d",
         name: "شام (منو ۳)",
-        desc: "بورانی اسفناج + ۳ فیله مرغ + ماست + تست",
-        time: "20:30",
+        desc: "نصف بشقاب بورانی اسفناج + ۳ فیله مرغ (۱۸۰ گرم) + ۱ کاسه ماست + ۱ نان تست",
+        time: "21:00",
         p: 45,
         c: 25,
         f: 8,
@@ -543,7 +626,7 @@ const WEEK_PLAN = {
       {
         id: "bed",
         name: "قبل خواب",
-        desc: "۱ لیوان شیر",
+        desc: "۱ لیوان شیر کم‌چرب",
         time: "23:00",
         p: 8,
         c: 12,
@@ -619,7 +702,6 @@ const MacroRing = ({ label, current, total, color }) => {
       </div>
       <div className="text-center mt-1">
         <div className="text-xs text-gray-400 font-medium mb-0.5">{label}</div>
-        {/* Fixed Macro display logic: Current / Target g */}
         <div
           className="text-[10px] text-gray-500 font-mono tracking-tight"
           dir="ltr"
@@ -644,20 +726,25 @@ export default function App() {
   const [highlightedId, setHighlightedId] = useState(null);
   const [weightData] = useState(INITIAL_WEIGHT_DATA);
   const [profile] = useState({ weight: 134, height: 178, muscle: 50, fat: 35 });
+  const [streak, setStreak] = useState(0); // New Feature
 
   const itemRefs = useRef({});
 
   useEffect(() => {
     const savedHydration = localStorage.getItem("hydration");
     const savedCompleted = localStorage.getItem("completedItems");
+    const savedStreak = localStorage.getItem("streak"); // Load streak
     if (savedHydration) setHydration(JSON.parse(savedHydration));
     if (savedCompleted) setCompletedItems(JSON.parse(savedCompleted));
+    if (savedStreak) setStreak(JSON.parse(savedStreak));
+    else setStreak(1); // Start day 1
   }, []);
 
   useEffect(() => {
     localStorage.setItem("hydration", JSON.stringify(hydration));
     localStorage.setItem("completedItems", JSON.stringify(completedItems));
-  }, [hydration, completedItems]);
+    localStorage.setItem("streak", JSON.stringify(streak));
+  }, [hydration, completedItems, streak]);
 
   const toggleItem = (id) => {
     const key = `${today}-${id}`;
@@ -695,18 +782,14 @@ export default function App() {
     if (hydration < 4000) setHydration((prev) => prev + 250);
   };
 
-  // Jump to specific item in Plan tab
   const navigateToItem = (id) => {
     setActiveTab("plan");
     setHighlightedId(id);
-
-    // Smooth scroll after tab switches
     setTimeout(() => {
       const element = itemRefs.current[id];
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
-      // Remove highlight after animation
       setTimeout(() => setHighlightedId(null), 2500);
     }, 100);
   };
@@ -729,13 +812,29 @@ export default function App() {
           .scrollbar-hide::-webkit-scrollbar { display: none; }
         `}</style>
 
+        {/* NEW HEADER WITH STREAK & TRAINING MODE */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-white">سلام سروش 💪</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-white">سلام سروش 💪</h1>
+              {currentPlan.isTraining && (
+                <span className="bg-rose-500/20 text-rose-400 text-[10px] px-2 py-0.5 rounded-full border border-rose-500/50 flex items-center gap-1 animate-pulse">
+                  <Dumbbell size={10} /> روز تمرین
+                </span>
+              )}
+            </div>
             <p className="text-gray-400 text-sm">امروز: {currentPlan.title}</p>
           </div>
-          <div className="bg-gray-800 p-2 rounded-full border border-gray-600">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg">
+
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col items-end mr-1">
+              <div className="flex items-center gap-1 text-orange-500">
+                <Flame size={14} fill="currentColor" />
+                <span className="font-bold text-sm">{streak} روز</span>
+              </div>
+              <span className="text-[9px] text-gray-500">زنجیره نظم</span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg border-2 border-gray-800">
               S
             </div>
           </div>
@@ -750,7 +849,6 @@ export default function App() {
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-white font-bold flex items-center gap-2">
                 <Zap size={18} className="text-yellow-400" /> وضعیت سوخت
-                (ماکروها)
               </h3>
               <div className="flex items-center gap-1 bg-gray-900 px-3 py-1 rounded-full border border-gray-700">
                 <Flame size={14} className="text-orange-500" />
@@ -831,13 +929,12 @@ export default function App() {
               3.0 <span className="text-sm font-normal">kg</span>
             </div>
             <div className="text-xs text-emerald-400 mt-1 font-bold">
-              عالیه سروش! 🔥
+              عالیه! 🔥
             </div>
           </Card>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          {/* NEXT MEAL BOX */}
           <Card
             className="border-l-4 border-l-blue-500 py-4 cursor-pointer active:scale-[0.98] transition-transform"
             onClick={() => nextMeal && navigateToItem(nextMeal.id)}
@@ -868,7 +965,6 @@ export default function App() {
             )}
           </Card>
 
-          {/* NEXT SUPPLEMENT BOX */}
           <Card
             className="border-l-4 border-l-purple-500 py-4 cursor-pointer active:scale-[0.98] transition-transform"
             onClick={() => nextSup && navigateToItem(nextSup.id)}
@@ -903,6 +999,10 @@ export default function App() {
     );
   };
 
+  // (بقیه ویوها مثل PlanView و ProgressView بدون تغییر می‌مانند چون عالی هستند)
+  // برای خلاصه شدن کد، فقط DashboardView رو تغییر دادیم که در بالا آوردم
+  // اما کل کامپوننت PlanView و ProgressView قبلی رو اینجا میذارم که کپی پیست راحت باشه
+
   const PlanView = () => (
     <div className="space-y-6 pb-24">
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -925,6 +1025,16 @@ export default function App() {
       </div>
 
       <div className="space-y-4">
+        {/* NEW HEADER FOR TRAINING DAYS */}
+        {currentPlan.isTraining && (
+          <div className="bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl flex items-center gap-3 mb-4">
+            <Dumbbell className="text-rose-500" />
+            <div className="text-rose-200 text-sm">
+              امروز روز تمرین سنگینه! وعده‌های بعد تمرین رو جدی بگیر.
+            </div>
+          </div>
+        )}
+
         <h2 className="text-xl font-bold text-white flex items-center gap-2">
           <Utensils size={20} className="text-orange-500" /> وعده‌های غذایی
         </h2>
@@ -1147,7 +1257,6 @@ export default function App() {
       dir="rtl"
     >
       <div className="max-w-md mx-auto min-h-screen bg-gray-900 shadow-2xl relative flex flex-col border-x border-gray-800">
-        {/* Decorative background glow */}
         <div className="absolute top-0 left-0 w-full h-64 bg-blue-600/10 blur-[100px] pointer-events-none"></div>
 
         <div className="flex-1 relative z-10 p-5 overflow-y-auto scroll-smooth scrollbar-hide">
@@ -1156,7 +1265,6 @@ export default function App() {
           {activeTab === "progress" && <ProgressView />}
         </div>
 
-        {/* BOTTOM TAB BAR */}
         <div className="sticky bottom-0 w-full bg-gray-950/90 backdrop-blur-2xl border-t border-gray-800 px-4 py-3 flex justify-around items-center z-50 rounded-t-[32px] shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
           <button
             onClick={() => setActiveTab("dashboard")}
