@@ -114,63 +114,54 @@ const WEEK_PLAN = {
     ],
   },
   0: {
-    // Sunday (Day 2)
-    title: "یکشنبه - تنوع دریایی",
-    macros: { protein: 205, carbs: 210, fat: 52, calories: 2200 },
+    // Sunday (Now with Friday's Plan)
+    title: "یکشنبه - تثبیت و استراحت",
+    macros: { protein: 195, carbs: 180, fat: 58, calories: 2100 },
     meals: [
       {
         id: "b",
-        name: "صبحانه (منو ۲)",
-        desc: "اوتمیل (جو+شیر+موز+عسل+کره بادام+گردو)",
+        name: "صبحانه (منو ۱)",
+        desc: "۶ سفیده + ۲ تست + ۶۰گ پنیر + گردو",
         time: "08:00",
-        p: 20,
-        c: 60,
-        f: 15,
+        p: 35,
+        c: 30,
+        f: 12,
       },
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ اسکوپ وی + آب",
+        desc: "۱ سیب + آجیل خام",
         time: "10:30",
-        p: 25,
-        c: 2,
-        f: 1,
+        p: 5,
+        c: 20,
+        f: 15,
       },
       {
         id: "l",
-        name: "ناهار (منو ۵)",
-        desc: "۳/۴ برنج + ۲۲۰گ ماهی کبابی",
+        name: "ناهار (منو ۱)",
+        desc: "۳/۴ برنج + ۲۰۰گ مرغ + سالاد",
         time: "13:30",
-        p: 50,
-        c: 50,
-        f: 12,
+        p: 60,
+        c: 60,
+        f: 10,
       },
       {
-        id: "pre",
-        name: "قبل تمرین",
-        desc: "کافئین ۲۰۰",
-        time: "16:00",
-        p: 0,
-        c: 0,
-        f: 0,
-      },
-      {
-        id: "post",
-        name: "بعد تمرین",
-        desc: "۱ سیب‌زمینی + ۲ فیله مرغ (یا وی)",
-        time: "18:00",
-        p: 30,
-        c: 35,
+        id: "s2",
+        name: "عصرانه",
+        desc: "۱ کاسه عدسی یا نیم اسکوپ وی",
+        time: "17:00",
+        p: 15,
+        c: 20,
         f: 2,
       },
       {
         id: "d",
-        name: "شام (منو ۳)",
-        desc: "بورانی اسفناج + ۳ فیله مرغ + ماست + تست",
+        name: "شام (منو ۲)",
+        desc: "۱۷۰گ استیک + سبزی + ۱ تست",
         time: "20:30",
-        p: 45,
-        c: 25,
-        f: 8,
+        p: 50,
+        c: 15,
+        f: 15,
       },
       {
         id: "bed",
@@ -491,54 +482,63 @@ const WEEK_PLAN = {
     ],
   },
   5: {
-    // Friday (Day 7)
-    title: "جمعه - تثبیت و استراحت",
-    macros: { protein: 195, carbs: 180, fat: 58, calories: 2100 },
+    // Friday (Now with Sunday's Plan)
+    title: "جمعه - تنوع دریایی",
+    macros: { protein: 205, carbs: 210, fat: 52, calories: 2200 },
     meals: [
       {
         id: "b",
-        name: "صبحانه (منو ۱)",
-        desc: "۶ سفیده + ۲ تست + ۶۰گ پنیر + گردو",
+        name: "صبحانه (منو ۲)",
+        desc: "اوتمیل (جو+شیر+موز+عسل+کره بادام+گردو)",
         time: "08:00",
-        p: 35,
-        c: 30,
-        f: 12,
+        p: 20,
+        c: 60,
+        f: 15,
       },
       {
         id: "s1",
         name: "میان‌وعده صبح",
-        desc: "۱ سیب + آجیل خام",
+        desc: "۱ اسکوپ وی + آب",
         time: "10:30",
-        p: 5,
-        c: 20,
-        f: 15,
+        p: 25,
+        c: 2,
+        f: 1,
       },
       {
         id: "l",
-        name: "ناهار (منو ۱)",
-        desc: "۳/۴ برنج + ۲۰۰گ مرغ + سالاد",
+        name: "ناهار (منو ۵)",
+        desc: "۳/۴ برنج + ۲۲۰گ ماهی کبابی",
         time: "13:30",
-        p: 60,
-        c: 60,
-        f: 10,
+        p: 50,
+        c: 50,
+        f: 12,
       },
       {
-        id: "s2",
-        name: "عصرانه",
-        desc: "۱ کاسه عدسی یا نیم اسکوپ وی",
-        time: "17:00",
-        p: 15,
-        c: 20,
+        id: "pre",
+        name: "قبل تمرین",
+        desc: "کافئین ۲۰۰",
+        time: "16:00",
+        p: 0,
+        c: 0,
+        f: 0,
+      },
+      {
+        id: "post",
+        name: "بعد تمرین",
+        desc: "۱ سیب‌زمینی + ۲ فیله مرغ (یا وی)",
+        time: "18:00",
+        p: 30,
+        c: 35,
         f: 2,
       },
       {
         id: "d",
-        name: "شام (منو ۲)",
-        desc: "۱۷۰گ استیک + سبزی + ۱ تست",
+        name: "شام (منو ۳)",
+        desc: "بورانی اسفناج + ۳ فیله مرغ + ماست + تست",
         time: "20:30",
-        p: 50,
-        c: 15,
-        f: 15,
+        p: 45,
+        c: 25,
+        f: 8,
       },
       {
         id: "bed",
@@ -629,7 +629,7 @@ const MacroRing = ({ label, current, total, color }) => {
 
 // --- MAIN APP ---
 
-export default function BodyCockpit() {
+export default function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [today, setToday] = useState(new Date().getDay());
   const [currentPlan, setCurrentPlan] = useState(
@@ -822,7 +822,7 @@ export default function BodyCockpit() {
             )}
           </Card>
 
-          {/* NEXT SUPPLEMENT BOX (NEW) */}
+          {/* NEXT SUPPLEMENT BOX */}
           <Card
             className="border-l-4 border-l-purple-500 py-3"
             onClick={() => setActiveTab("plan")}
