@@ -732,8 +732,8 @@ export default function App() {
         <div className="flex justify-between items-center px-1">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 tracking-tighter">
-                Body Cockpit
+              <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 tracking-tighter">
+                سلام سروش!
               </h1>
             </div>
             <p className="text-gray-400 text-xs font-medium mt-1 flex items-center gap-2">
@@ -767,21 +767,18 @@ export default function App() {
 
         {/* Macros */}
         <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-gray-900 to-black border border-gray-800 shadow-2xl">
-          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-            <Zap size={120} className="text-white" />
-          </div>
           <div className="p-6 relative z-10">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-2">
               <h3 className="text-white font-bold flex items-center gap-2 text-sm uppercase tracking-widest">
-                <div className="w-1 h-4 bg-yellow-400 rounded-full"></div> وضعیت
-                سوخت
+                <div className="w-1 h-4 bg-yellow-400 rounded-full"></div> ماکرو
+                ها
               </h3>
-              <div className="flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-full border border-gray-700/50 shadow-inner">
+              <div className="flex items-center gap-3 bg-gray-800/80 px-3 py-1.5 rounded-full border border-gray-700/50 shadow-inner">
                 <Flame size={14} className="text-orange-500" />
                 <span className="text-white font-bold font-mono text-lg">
                   {consumedCalories}
                 </span>
-                <span className="text-[10px] text-gray-400 uppercase font-bold">
+                <span className="text-[12px] text-gray-400 uppercase font-bold">
                   kcal
                 </span>
               </div>
@@ -811,7 +808,7 @@ export default function App() {
 
         <div className="grid grid-cols-2 gap-4">
           <Card className="col-span-2 !bg-gradient-to-r from-gray-900 via-gray-900 to-gray-800 border-l-4 border-l-emerald-500">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-1">
               <h2 className="text-sm font-bold text-gray-200 flex items-center gap-2">
                 <Activity size={18} className="text-emerald-400" /> عملکرد امروز
               </h2>
@@ -831,8 +828,8 @@ export default function App() {
             className="flex flex-col items-center justify-center p-6 relative group cursor-pointer border-blue-500/20 hover:border-blue-500/50"
             onClick={addWater}
           >
-            <div className="absolute top-2 right-2 bg-blue-500/10 px-2 py-1 rounded-lg text-blue-300 text-[9px] font-bold border border-blue-500/20">
-              +250ml
+            <div className="absolute top-2 right-2 bg-blue-500/10 px-2 py-1 rounded-lg text-blue-300 text-[12px] font-bold border border-blue-500/20">
+              250ml+
             </div>
             <div className="mb-3 p-3 bg-blue-500/10 rounded-full group-hover:bg-blue-500/20 transition-colors">
               <Droplet
@@ -840,10 +837,10 @@ export default function App() {
                 className="text-blue-400 group-hover:scale-110 transition-transform"
               />
             </div>
-            <span className="text-xl font-black text-white font-mono">
+            <span className="text-2xl font-black text-white font-mono">
               {(hydration / 1000).toFixed(1)}L
             </span>
-            <span className="text-[10px] text-gray-500 font-bold uppercase mt-1">
+            <span className="text-[14px] text-gray-500 font-bold uppercase mt-1">
               آب مصرفی
             </span>
             <div
@@ -853,14 +850,14 @@ export default function App() {
           </Card>
 
           <Card className="flex flex-col justify-center items-center border-orange-500/20">
-            <div className="text-[10px] text-gray-500 font-bold uppercase mb-2">
+            <div className="text-[14px] text-gray-500 font-bold uppercase mb-2">
               آخرین وزن ثبت شده
             </div>
             <div className="text-3xl font-black text-white font-mono tracking-tight">
               {weightData[weightData.length - 1].weight}
               <span className="text-sm text-gray-600 ml-1">kg</span>
             </div>
-            <div className="text-[10px] text-emerald-400 mt-2 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1">
+            <div className="text-[12px] text-emerald-400 mt-2 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1">
               <TrendingDown size={10} /> روند نزولی
             </div>
           </Card>
@@ -998,7 +995,7 @@ export default function App() {
                   <div className="flex justify-between items-start">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3
-                        className={`font-bold text-base ${
+                        className={`font-bold text-sm ${
                           isCompleted(meal.id)
                             ? "text-gray-500 line-through"
                             : "text-gray-100"
@@ -1018,7 +1015,7 @@ export default function App() {
                           </button>
                         )}
                     </div>
-                    <span className="text-[10px] text-gray-400 bg-gray-950 font-bold px-2.5 py-1 rounded-lg border border-gray-800 font-mono">
+                    <span className="text-[12px] text-gray-400 bg-gray-950 font-bold px-2.5 py-1 rounded-lg border border-gray-800 font-mono">
                       {meal.time}
                     </span>
                   </div>
@@ -1028,13 +1025,13 @@ export default function App() {
 
                   {!isCompleted(meal.id) && (
                     <div className="flex gap-2 mt-4">
-                      <span className="text-[9px] bg-emerald-950/50 px-2 py-1 rounded-md text-emerald-400 font-bold border border-emerald-900/30">
+                      <span className="text-[12px] bg-emerald-950/50 px-2 py-1 rounded-md text-emerald-400 font-bold border border-emerald-900/30">
                         P: {meal.p}g
                       </span>
-                      <span className="text-[9px] bg-blue-950/50 px-2 py-1 rounded-md text-blue-400 font-bold border border-blue-900/30">
+                      <span className="text-[12px] bg-blue-950/50 px-2 py-1 rounded-md text-blue-400 font-bold border border-blue-900/30">
                         C: {meal.c}g
                       </span>
-                      <span className="text-[9px] bg-rose-950/50 px-2 py-1 rounded-md text-rose-400 font-bold border border-rose-900/30">
+                      <span className="text-[12px] bg-rose-950/50 px-2 py-1 rounded-md text-rose-400 font-bold border border-rose-900/30">
                         F: {meal.f}g
                       </span>
                     </div>
@@ -1243,8 +1240,18 @@ export default function App() {
       dir="rtl"
     >
       <style>{`
-        @font-face { font-family: 'AppCustomFont'; src: url('MyFont.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
-        .custom-font-wrapper { font-family: 'AppCustomFont', Tahoma, Arial, sans-serif !important; }
+         @font-face {
+          font-family: 'DANA-FANUM';
+          src: url('/DANA-FANUM-BOLD.TTF') format('truetype');
+          font-weight: bold;
+          font-style: normal;
+          font-display: swap;
+         }
+
+          .custom-font-wrapper {
+            font-family: 'DANA-FANUM', sans-serif !important;
+            direction: rtl;
+          }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
